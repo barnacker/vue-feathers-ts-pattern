@@ -39,6 +39,7 @@ node_modules
 .vscode/*
 !.vscode/tasks.json
 !.vscode/extensions.json
+!.vscode/launch.json
 
 # Editor directories and files
 .idea

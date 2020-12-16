@@ -156,7 +156,7 @@ const someStuffThatGoesTogether = (): {
     // Test reactivity behavior
   const updThing = (): void => {
     const { text } = toRefs(ecosystem[1]);
-    console.log(text, ecosystem[1]);
+    console.log(text, importantLinks);
     text.value = 'poil';
   };
   return {
