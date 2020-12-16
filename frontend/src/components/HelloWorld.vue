@@ -94,7 +94,7 @@
 
 <script lang="ts">
 import {
-  defineComponent, ref, reactive, toRefs,
+  defineComponent, ref, reactive, toRefs, Ref,
 } from '@vue/composition-api';
 
 const someStuffThatGoesTogether = (): {
@@ -153,10 +153,20 @@ const someStuffThatGoesTogether = (): {
       href: 'https://vuetifyjs.com/getting-started/frequently-asked-questions',
     },
   ]);
-    // Test reactivity behavior
+  const unAffaire = ref({ a: '1', b: 2 });
+  const unAutre = reactive({ a: '1', b: 2 });
+
+  enum Drawer {
+    Opened,
+    Closed,
+  }
+
+  const drawer: Ref<Drawer> = ref(Drawer.Closed);
+
+  // Test reactivity behavior
   const updThing = (): void => {
     const { text } = toRefs(ecosystem[1]);
-    console.log(text, importantLinks);
+    console.log(unAffaire, unAutre, drawer);
     text.value = 'poil';
   };
   return {
