@@ -88,16 +88,19 @@
         </v-row>
       </v-col>
     </v-row>
+    <v-btn color="success" @click="updThing">test</v-btn>
   </v-container>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from '@vue/composition-api';
+import {
+  defineComponent, ref, reactive, toRefs,
+} from '@vue/composition-api';
 
 export default defineComponent({
   name: 'HelloWorld',
   setup() {
-    const ecosystem = ref([
+    const ecosystem = reactive([
       {
         text: 'vuetify-loader',
         href: 'https://github.com/vuetifyjs/vuetify-loader',
@@ -147,10 +150,17 @@ export default defineComponent({
         href: 'https://vuetifyjs.com/getting-started/frequently-asked-questions',
       },
     ]);
+    // Test reactivity behavior
+    const updThing = (): void => {
+      const { text } = toRefs(ecosystem[1]);
+      console.log(text, ecosystem[1]);
+      text.value = 'poil';
+    };
     return {
       ecosystem,
       importantLinks,
       whatsNext,
+      updThing,
     };
   },
 });
