@@ -97,70 +97,81 @@ import {
   defineComponent, ref, reactive, toRefs,
 } from '@vue/composition-api';
 
+const someStuffThatGoesTogether = (): {
+    ecosystem: object;
+    importantLinks: object;
+    whatsNext: object;
+    updThing: () => void;
+  } => {
+  const ecosystem = reactive([
+    {
+      text: 'vuetify-loader',
+      href: 'https://github.com/vuetifyjs/vuetify-loader',
+    },
+    {
+      text: 'github',
+      href: 'https://github.com/vuetifyjs/vuetify',
+    },
+    {
+      text: 'awesome-vuetify',
+      href: 'https://github.com/vuetifyjs/awesome-vuetify',
+    },
+  ]);
+  const importantLinks = ref([
+    {
+      text: 'Documentation',
+      href: 'https://vuetifyjs.com',
+    },
+    {
+      text: 'Chat',
+      href: 'https://community.vuetifyjs.com',
+    },
+    {
+      text: 'Made with Vuetify',
+      href: 'https://madewithvuejs.com/vuetify',
+    },
+    {
+      text: 'Twitter',
+      href: 'https://twitter.com/vuetifyjs',
+    },
+    {
+      text: 'Articles',
+      href: 'https://medium.com/vuetify',
+    },
+  ]);
+  const whatsNext = ref([
+    {
+      text: 'Explore components',
+      href: 'https://vuetifyjs.com/components/api-explorer',
+    },
+    {
+      text: 'Select a layout',
+      href: 'https://vuetifyjs.com/getting-started/pre-made-layouts',
+    },
+    {
+      text: 'Frequently Asked Questions',
+      href: 'https://vuetifyjs.com/getting-started/frequently-asked-questions',
+    },
+  ]);
+    // Test reactivity behavior
+  const updThing = (): void => {
+    const { text } = toRefs(ecosystem[1]);
+    console.log(text, ecosystem[1]);
+    text.value = 'poil';
+  };
+  return {
+    ecosystem,
+    importantLinks,
+    whatsNext,
+    updThing,
+  };
+};
+
 export default defineComponent({
   name: 'HelloWorld',
   setup() {
-    const ecosystem = reactive([
-      {
-        text: 'vuetify-loader',
-        href: 'https://github.com/vuetifyjs/vuetify-loader',
-      },
-      {
-        text: 'github',
-        href: 'https://github.com/vuetifyjs/vuetify',
-      },
-      {
-        text: 'awesome-vuetify',
-        href: 'https://github.com/vuetifyjs/awesome-vuetify',
-      },
-    ]);
-    const importantLinks = ref([
-      {
-        text: 'Documentation',
-        href: 'https://vuetifyjs.com',
-      },
-      {
-        text: 'Chat',
-        href: 'https://community.vuetifyjs.com',
-      },
-      {
-        text: 'Made with Vuetify',
-        href: 'https://madewithvuejs.com/vuetify',
-      },
-      {
-        text: 'Twitter',
-        href: 'https://twitter.com/vuetifyjs',
-      },
-      {
-        text: 'Articles',
-        href: 'https://medium.com/vuetify',
-      },
-    ]);
-    const whatsNext = ref([
-      {
-        text: 'Explore components',
-        href: 'https://vuetifyjs.com/components/api-explorer',
-      },
-      {
-        text: 'Select a layout',
-        href: 'https://vuetifyjs.com/getting-started/pre-made-layouts',
-      },
-      {
-        text: 'Frequently Asked Questions',
-        href: 'https://vuetifyjs.com/getting-started/frequently-asked-questions',
-      },
-    ]);
-    // Test reactivity behavior
-    const updThing = (): void => {
-      const { text } = toRefs(ecosystem[1]);
-      console.log(text, ecosystem[1]);
-      text.value = 'poil';
-    };
     return {
-      ecosystem,
-      importantLinks,
-      whatsNext,
-      updThing,
+      ...someStuffThatGoesTogether(),
     };
   },
 });
