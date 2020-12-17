@@ -95,11 +95,23 @@
     <v-container>
       <v-row>
         <v-col class="pa-0" cols="3">
-          <focused-input v-model="uName" />
+          <focused-input v-model="uName" hide-buttons />
           <focused-input v-model="another" />
         </v-col>
         <v-col class="pa-0" cols="3">
           <focused-input v-model="uName" />
+        </v-col>
+        <v-col class="pa-0" cols="3">
+          <focused-group>
+            <template v-slot:view>
+              <div>ALLO</div>
+              <div>{{ uName }}</div>
+            </template>
+            <template v-slot:edit>
+              <focused-input v-model="uName" />
+              <focused-input v-model="another" />
+            </template>
+          </focused-group>
         </v-col>
       </v-row>
     </v-container>
@@ -120,6 +132,7 @@ import {
 import { useBox, Comfortable } from '@/composites/box';
 
 import FocusedInput from './FocusedInput.vue';
+import FocusedGroup from './FocusedGroup.vue';
 
 enum Drawer {
   Opened,
@@ -152,6 +165,7 @@ export default defineComponent({
 
   components: {
     FocusedInput,
+    FocusedGroup,
   },
 
   setup() {

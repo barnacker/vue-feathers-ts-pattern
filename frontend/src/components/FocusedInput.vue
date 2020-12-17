@@ -1,12 +1,12 @@
 <template>
   <a v-if="!currentActive"
     class="focused-input inactive d-flex align-center"
-    :href="''"
+    :href="'#'"
     @click="startEdit"
     @focus="startEdit"
   >
     <slot name="view">
-      <span>{{ currentValue }}</span>
+      <span class="ml-2">{{ currentValue }}</span>
       <v-icon class="ml-2 icon" small>mdi-pencil</v-icon>
     </slot>
   </a>
@@ -14,10 +14,10 @@
   <div v-else
     class="focused-input active d-flex align-center"
   >
-    <slot name="edit">
-      <v-col class="py-0">
-        <v-row>
-          <v-col class="pa-0">
+    <v-col class="py-0">
+      <v-row>
+        <v-col class="pa-0">
+          <slot name="edit">
             <v-text-field
               ref="input"
               v-model="currentValue"
@@ -26,41 +26,44 @@
               @keyup="keyup"
               @blur="approveEdit"
             />
-          </v-col>
+          </slot>
+        </v-col>
 
-          <v-col class="pa-0 d-flex align-center" cols="auto">
-            <v-btn
-              style="min-width: 0"
-              tabindex="-1"
-              icon
-              small
-              @click="cancelEdit"
-            >
-              <v-icon class="pa-1" color="error" small>mdi-close</v-icon>
-            </v-btn>
+        <v-col v-if="!hideButtons"
+          class="pa-0 d-flex align-center"
+          cols="auto"
+        >
+          <v-btn
+            style="min-width: 0"
+            tabindex="-1"
+            icon
+            small
+            @click="cancelEdit"
+          >
+            <v-icon class="pa-1" color="error" small>mdi-close</v-icon>
+          </v-btn>
 
-            <v-btn
-              style="min-width: 0"
-              tabindex="-1"
-              icon
-              small
-              @click="approveEdit"
-            >
-              <v-icon class="pa-1" color="success" small>mdi-check</v-icon>
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-col>
-    </slot>
+          <v-btn
+            style="min-width: 0"
+            tabindex="-1"
+            icon
+            small
+            @click="approveEdit"
+          >
+            <v-icon class="pa-1" color="success" small>mdi-check</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-col>
   </div>
 </template>
 
 <script lang="ts">
 import {
-  defineComponent, getCurrentInstance, ref, watch,
+  defineComponent, getCurrentInstance,
 } from '@vue/composition-api';
 
-import { useSyncedProp } from '@/composites/prop';
+import { usePropRef, useSyncedProp } from '@/composites/prop';
 
 export default defineComponent({
   name: 'FocusedInput',
@@ -69,49 +72,55 @@ export default defineComponent({
     value: { type: String, default: '' },
     label: { type: String, default: '' },
     active: { type: Boolean, default: false },
+    hideButtons: { type: Boolean, default: false },
   },
 
   setup(props, context) {
-    const internalInstance = getCurrentInstance();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const instance = getCurrentInstance() as any;
 
     const currentActive = useSyncedProp(context, props, 'active');
-
-    // currentValue
-    const currentValue = ref(props.value);
-    watch((): Ref => props.value, (newValue: string): void => {
-      currentValue.value = newValue;
-    });
+    const currentValue = usePropRef(props, 'value');
 
     return {
       currentValue,
       currentActive,
 
+      // start editing mode and focus on input field
       startEdit() {
         currentActive.value = true;
-        internalInstance.$nextTick(() => {
-          context.refs.input.focus();
+        instance.$nextTick(() => {
+          if (context.refs.input) {
+            (context.refs.input as HTMLElement).focus();
+          }
+          context.emit('edit-start');
         });
       },
 
+      // emits input event (v-model) and cancel editing
       approveEdit() {
         currentActive.value = false;
         context.emit('input', currentValue.value);
+        context.emit('edit-approve');
       },
 
-      // reset to original prop value
+      // reset to original prop value and cancel editing
       cancelEdit() {
         currentActive.value = false;
         currentValue.value = props.value;
+        context.emit('edit-cancel');
       },
 
       keyup(e: KeyboardEvent) {
         if (e.which === 27) { // ESCAPE
-          internalInstance.cancelEdit();
+          instance.cancelEdit();
+          e.stopPropagation();
+          e.preventDefault();
         } else if (e.which === 13) { // ENTER
-          internalInstance.approveEdit();
+          instance.approveEdit();
+          e.stopPropagation();
+          e.preventDefault();
         }
-        e.stopPropagation();
-        e.preventDefault();
       },
     };
   },
