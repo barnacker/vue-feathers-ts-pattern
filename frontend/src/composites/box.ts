@@ -7,6 +7,7 @@ export enum Comfortable {
   Bof,
 }
 
+// Compositron
 export const useBox = (): {
   dimension: { profondeur: number; comfortable: Comfortable };
   isProfound: ComputedRef<boolean>;

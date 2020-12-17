@@ -92,6 +92,18 @@
     <v-btn color="success" @click="updThing">test</v-btn>
     <v-btn color="error" @click="drawer.close">test drawer close</v-btn>
 
+    <v-container>
+      <v-row>
+        <v-col class="pa-0" cols="3">
+          <focused-input v-model="uName" />
+          <focused-input v-model="another" />
+        </v-col>
+        <v-col class="pa-0" cols="3">
+          <focused-input v-model="uName" />
+        </v-col>
+      </v-row>
+    </v-container>
+
     <div>dimension.profondeur: {{ box.dimension.profondeur }}</div>
     <div>Opened: {{ drawer.isOpened }}</div>
     <div>isProfound: {{ box.isProfound }}</div>
@@ -105,7 +117,9 @@ import {
   defineComponent, ref, reactive, toRefs, computed,
 } from '@vue/composition-api';
 
-import { useBox, Comfortable } from '@/plugins/box';
+import { useBox, Comfortable } from '@/composites/box';
+
+import FocusedInput from './FocusedInput.vue';
 
 enum Drawer {
   Opened,
@@ -135,8 +149,14 @@ const useDrawer = () => {
 
 export default defineComponent({
   name: 'HelloWorld',
+
+  components: {
+    FocusedInput,
+  },
+
   setup() {
     const uName = ref('MeMyselfAndI');
+    const another = ref('Another');
 
     const box = useBox();
     const drawer = useDrawer();
@@ -215,6 +235,7 @@ export default defineComponent({
       drawer: ref(drawer),
       box: ref(box),
       uName,
+      another,
       ecosystem,
       importantLinks,
       whatsNext,
