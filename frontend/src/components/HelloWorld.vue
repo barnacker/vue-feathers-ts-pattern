@@ -88,100 +88,139 @@
         </v-row>
       </v-col>
     </v-row>
+
     <v-btn color="success" @click="updThing">test</v-btn>
+    <v-btn color="error" @click="drawer.close">test drawer close</v-btn>
+
+    <div>dimension.profondeur: {{ box.dimension.profondeur }}</div>
+    <div>Opened: {{ drawer.isOpened }}</div>
+    <div>isProfound: {{ box.isProfound }}</div>
+    <div>myCompute: {{ computes.myCompute.value }}</div>
+    <div>Comfortable[box.dimension.comfortable]: {{ Comfortable[box.dimension.comfortable] }}</div>
   </v-container>
 </template>
 
 <script lang="ts">
 import {
-  defineComponent, ref, reactive, toRefs, Ref,
+  defineComponent, ref, reactive, toRefs, computed,
 } from '@vue/composition-api';
 
-const someStuffThatGoesTogether = (): {
-    ecosystem: object;
-    importantLinks: object;
-    whatsNext: object;
-    updThing: () => void;
-  } => {
-  const ecosystem = reactive([
-    {
-      text: 'vuetify-loader',
-      href: 'https://github.com/vuetifyjs/vuetify-loader',
-    },
-    {
-      text: 'github',
-      href: 'https://github.com/vuetifyjs/vuetify',
-    },
-    {
-      text: 'awesome-vuetify',
-      href: 'https://github.com/vuetifyjs/awesome-vuetify',
-    },
-  ]);
-  const importantLinks = ref([
-    {
-      text: 'Documentation',
-      href: 'https://vuetifyjs.com',
-    },
-    {
-      text: 'Chat',
-      href: 'https://community.vuetifyjs.com',
-    },
-    {
-      text: 'Made with Vuetify',
-      href: 'https://madewithvuejs.com/vuetify',
-    },
-    {
-      text: 'Twitter',
-      href: 'https://twitter.com/vuetifyjs',
-    },
-    {
-      text: 'Articles',
-      href: 'https://medium.com/vuetify',
-    },
-  ]);
-  const whatsNext = ref([
-    {
-      text: 'Explore components',
-      href: 'https://vuetifyjs.com/components/api-explorer',
-    },
-    {
-      text: 'Select a layout',
-      href: 'https://vuetifyjs.com/getting-started/pre-made-layouts',
-    },
-    {
-      text: 'Frequently Asked Questions',
-      href: 'https://vuetifyjs.com/getting-started/frequently-asked-questions',
-    },
-  ]);
-  const unAffaire = ref({ a: '1', b: 2 });
-  const unAutre = reactive({ a: '1', b: 2 });
+import { useBox, Comfortable } from '@/plugins/box';
 
-  enum Drawer {
-    Opened,
-    Closed,
-  }
+enum Drawer {
+  Opened,
+  Closed,
+}
 
-  const drawer: Ref<Drawer> = ref(Drawer.Closed);
+const useDrawer = () => {
+  const state = ref(Drawer.Closed);
 
-  // Test reactivity behavior
-  const updThing = (): void => {
-    const { text } = toRefs(ecosystem[1]);
-    console.log(unAffaire, unAutre, drawer);
-    text.value = 'poil';
+  const open = (): void => {
+    state.value = Drawer.Opened;
   };
+
+  const close = (): void => {
+    state.value = Drawer.Closed;
+  };
+
+  const isOpened = computed(() => state.value === Drawer.Opened);
+
   return {
-    ecosystem,
-    importantLinks,
-    whatsNext,
-    updThing,
+    state,
+    open,
+    close,
+    isOpened,
   };
 };
 
 export default defineComponent({
   name: 'HelloWorld',
   setup() {
+    const uName = ref('MeMyselfAndI');
+
+    const box = useBox();
+    const drawer = useDrawer();
+
+    const ecosystem = reactive([
+      {
+        text: 'vuetify-loader',
+        href: 'https://github.com/vuetifyjs/vuetify-loader',
+      },
+      {
+        text: 'github',
+        href: 'https://github.com/vuetifyjs/vuetify',
+      },
+      {
+        text: 'awesome-vuetify',
+        href: 'https://github.com/vuetifyjs/awesome-vuetify',
+      },
+    ]);
+
+    const importantLinks = ref([
+      {
+        text: 'Documentation',
+        href: 'https://vuetifyjs.com',
+      },
+      {
+        text: 'Chat',
+        href: 'https://community.vuetifyjs.com',
+      },
+      {
+        text: 'Made with Vuetify',
+        href: 'https://madewithvuejs.com/vuetify',
+      },
+      {
+        text: 'Twitter',
+        href: 'https://twitter.com/vuetifyjs',
+      },
+      {
+        text: 'Articles',
+        href: 'https://medium.com/vuetify',
+      },
+    ]);
+
+    const whatsNext = ref([
+      {
+        text: 'Explore components',
+        href: 'https://vuetifyjs.com/components/api-explorer',
+      },
+      {
+        text: 'Select a layout',
+        href: 'https://vuetifyjs.com/getting-started/pre-made-layouts',
+      },
+      {
+        text: 'Frequently Asked Questions',
+        href: 'https://vuetifyjs.com/getting-started/frequently-asked-questions',
+      },
+    ]);
+    const unAffaire = ref({ a: '1', b: 2 });
+    const unAutre = reactive({ a: '1', b: 2 });
+
+    // Test reactivity behavior
+    const updThing = (): void => {
+      const { text } = toRefs(ecosystem[1]);
+      console.log(unAffaire, unAutre, drawer);
+      text.value = 'poil';
+      box.dimension.profondeur = 20;
+      drawer.open();
+    };
+
+    const computes = {
+      myCompute: computed(() => 'fix'),
+    };
+
+    console.log(Comfortable[box.dimension.comfortable]);
+
     return {
-      ...someStuffThatGoesTogether(),
+      drawer: ref(drawer),
+      box: ref(box),
+      uName,
+      ecosystem,
+      importantLinks,
+      whatsNext,
+      updThing,
+      computes,
+      Comfortable,
     };
   },
 });
