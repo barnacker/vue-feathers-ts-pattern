@@ -52,10 +52,11 @@
 
 <script lang="ts">
 import {
-  defineComponent, getCurrentInstance, watch, ref,
+  defineComponent, getCurrentInstance, watch,
 } from '@vue/composition-api';
 
-import { useSyncedProp } from '@/composites/prop';
+import _ from 'lodash';
+import { useSyncedProp, useProp } from '@/composites/prop';
 
 export default defineComponent({
   name: 'FocusedGroup',
@@ -70,14 +71,8 @@ export default defineComponent({
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const instance = getCurrentInstance()!;
 
-    const currentValue = ref(JSON.parse(JSON.stringify(props.value)));
-
-    watch(props.value, (): void => {
-      console.log('watch props.value', JSON.stringify(props.value));
-      currentValue.value = JSON.parse(JSON.stringify(props.value));
-    });
-
-    const currentActive = useSyncedProp(context, props, 'active');
+    const currentValue = useProp(props, 'value');
+    const currentActive = useSyncedProp(props, 'active', context);
 
     watch(currentActive, (newValue): void => {
       if (newValue) {
@@ -99,14 +94,14 @@ export default defineComponent({
     // emits input event (v-model) and cancel editing
     const approveEdit = (): void => {
       currentActive.value = false;
-      context.emit('input', JSON.parse(JSON.stringify(currentValue.value)));
+      context.emit('input', _.cloneDeep(currentValue.value));
       context.emit('edit-approve');
     };
 
     // reset to original prop value and cancel editing
     const cancelEdit = (): void => {
       currentActive.value = false;
-      currentValue.value = JSON.parse(JSON.stringify(props.value));
+      currentValue.value = _.cloneDeep(props.value);
       context.emit('edit-cancel');
     };
 

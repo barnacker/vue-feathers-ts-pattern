@@ -63,7 +63,7 @@ import {
   defineComponent, getCurrentInstance,
 } from '@vue/composition-api';
 
-import { usePropRef, useSyncedProp } from '@/composites/prop';
+import { useProp, useSyncedProp } from '@/composites/prop';
 
 export default defineComponent({
   name: 'FocusedInput',
@@ -79,8 +79,8 @@ export default defineComponent({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const instance = getCurrentInstance() as any;
 
-    const currentActive = useSyncedProp(context, props, 'active');
-    const currentValue = usePropRef(props, 'value');
+    const currentActive = useSyncedProp(props, 'active', context);
+    const currentValue = useProp(props, 'value');
 
     return {
       currentValue,
