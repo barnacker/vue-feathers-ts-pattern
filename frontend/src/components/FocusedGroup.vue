@@ -5,7 +5,7 @@
     @click="startEdit"
   >
     <div>
-      <slot name="view" v-bind="{ data: currentValue }" />
+      <slot />
     </div>
   </a>
 
