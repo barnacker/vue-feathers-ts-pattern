@@ -76,48 +76,52 @@ export default defineComponent({
   },
 
   setup(props, context) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const instance = getCurrentInstance() as any;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const instance = getCurrentInstance()!;
 
     const currentActive = useSyncedProp(props, 'active', context);
     const currentValue = useProp(props, 'value');
+
+    // start editing mode and focus on input field
+    const startEdit = (): void => {
+      currentActive.value = true;
+      instance.$nextTick(() => {
+        if (context.refs.input) {
+          (context.refs.input as HTMLElement).focus();
+        }
+        context.emit('edit-start');
+      });
+    };
+
+    // emits input event (v-model) and cancel editing
+    const approveEdit = (): void => {
+      currentActive.value = false;
+      context.emit('input', currentValue.value);
+      context.emit('edit-approve');
+    };
+
+    // reset to original prop value and cancel editing
+    const cancelEdit = (): void => {
+      currentActive.value = false;
+      currentValue.value = props.value;
+      context.emit('edit-cancel');
+    };
 
     return {
       currentValue,
       currentActive,
 
-      // start editing mode and focus on input field
-      startEdit() {
-        currentActive.value = true;
-        instance.$nextTick(() => {
-          if (context.refs.input) {
-            (context.refs.input as HTMLElement).focus();
-          }
-          context.emit('edit-start');
-        });
-      },
-
-      // emits input event (v-model) and cancel editing
-      approveEdit() {
-        currentActive.value = false;
-        context.emit('input', currentValue.value);
-        context.emit('edit-approve');
-      },
-
-      // reset to original prop value and cancel editing
-      cancelEdit() {
-        currentActive.value = false;
-        currentValue.value = props.value;
-        context.emit('edit-cancel');
-      },
+      startEdit,
+      approveEdit,
+      cancelEdit,
 
       keyup(e: KeyboardEvent) {
         if (e.which === 27) { // ESCAPE
-          instance.cancelEdit();
+          cancelEdit();
           e.stopPropagation();
           e.preventDefault();
         } else if (e.which === 13) { // ENTER
-          instance.approveEdit();
+          approveEdit();
           e.stopPropagation();
           e.preventDefault();
         }
