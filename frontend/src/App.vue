@@ -38,23 +38,15 @@
     </v-app-bar>
 
     <v-main>
-      <!-- <HelloWorld /> -->
-      <form-test />
+      <router-view />
     </v-main>
   </v-app>
 </template>
 
 <script lang="ts">
 import { defineComponent } from '@vue/composition-api';
-import HelloWorld from './components/HelloWorld.vue';
-import FormTest from './views/FormTest.vue';
 
 export default defineComponent({
   name: 'App',
-
-  components: {
-    HelloWorld,
-    FormTest,
-  },
 });
 </script>

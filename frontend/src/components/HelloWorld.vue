@@ -91,6 +91,7 @@
 
     <v-btn color="success" @click="updThing">test</v-btn>
     <v-btn color="error" @click="drawer.close">test drawer close</v-btn>
+    <v-btn color="info" @click="$router.push({ name: 'FormTest' })">Form Test</v-btn>
 
     <v-container>
       <v-row>

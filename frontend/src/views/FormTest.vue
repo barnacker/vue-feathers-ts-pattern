@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { reactive, defineComponent, ref } from '@vue/composition-api';
+import { defineComponent, ref } from '@vue/composition-api';
 
 import FocusedInput from '@/components/FocusedInput.vue';
 import FocusedGroup from '@/components/FocusedGroup.vue';
