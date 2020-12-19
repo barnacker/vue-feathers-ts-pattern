@@ -1,5 +1,5 @@
 import {
-  Ref, ref, SetupContext, watch,
+  Ref, ref, SetupContext, watch
 } from '@vue/composition-api';
 import _ from 'lodash';
 
@@ -41,7 +41,7 @@ export const useSyncedProp = (props: object, name: string, context: SetupContext
   });
 
   watch(r, (newValue): void => {
-    context.emit(`${name}:update`, newValue);
+    context.emit(`update:${name}`, newValue);
   });
 
   return r;
