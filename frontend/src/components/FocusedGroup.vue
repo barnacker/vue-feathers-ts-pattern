@@ -1,27 +1,31 @@
 <template>
-  <a v-if="!currentActive"
-    class="focused-input inactive d-flex align-center"
+  <a
+    :class="{ 'focused-input': true,
+              'd-flex': true,
+              'align-center': true,
+              active: currentActive,
+              inactive: !currentActive
+    }"
     :href="'#'"
     @click="startEdit"
-  >
-    <div>
-      <slot />
-    </div>
-  </a>
-
-  <a v-else
-    class="focused-input active d-flex align-center"
-    :href="'#'"
+    @focus="startEdit"
     @focusout="blurGroup"
     @keyup="keyup"
   >
-    <v-col class="py-0">
+    <div v-if="!currentActive" style="display: flex;">
+      <div>
+        <slot />
+      </div>
+      <v-icon class="ml-2 icon" small>mdi-pencil</v-icon>
+    </div>
+    <v-col v-else>
       <v-row>
         <v-col class="pa-0">
-          <slot name="edit" v-bind="{ data: currentValue }"/>
+          <slot name="edit" v-bind="{ data: currentValue }" />
         </v-col>
 
-        <v-col v-if="!hideButtons"
+        <v-col
+          v-if="!hideButtons"
           class="pa-0 d-flex align-center"
           cols="auto"
         >
@@ -52,18 +56,17 @@
 
 <script lang="ts">
 import {
-  defineComponent, getCurrentInstance, watch,
+  defineComponent, getCurrentInstance, watch, ref,
 } from '@vue/composition-api';
 
 import _ from 'lodash';
-import { useSyncedProp, useProp } from '@/composites/prop';
+import { useProp } from '@/composites/prop';
 
 export default defineComponent({
   name: 'FocusedGroup',
 
   props: {
     value: { type: Object, default: () => ({}) },
-    active: { type: Boolean, default: false },
     hideButtons: { type: Boolean, default: false },
   },
 
@@ -72,14 +75,16 @@ export default defineComponent({
     const instance = getCurrentInstance()!;
 
     const currentValue = useProp(props, 'value');
-    const currentActive = useSyncedProp(props, 'active', context);
+    const currentActive = ref(false);
 
     watch(currentActive, (newValue): void => {
       if (newValue) {
         instance.$nextTick(() => {
           const input = instance.$el.querySelector('input');
           if (input) {
-            input.select();
+            if (!input.readOnly) {
+              input.select();
+            }
           }
         });
       }
@@ -87,14 +92,17 @@ export default defineComponent({
 
     // start editing mode and focus on input field
     const startEdit = (): void => {
-      currentActive.value = true;
-      context.emit('edit-start');
+      if (!currentActive.value) {
+        currentActive.value = true;
+        context.emit('edit-start');
+      }
     };
 
     // emits input event (v-model) and cancel editing
     const approveEdit = (): void => {
       currentActive.value = false;
-      context.emit('input', _.cloneDeep(currentValue.value));
+      const clone = _.cloneDeep(currentValue.value);
+      context.emit('input', clone);
       context.emit('edit-approve');
     };
 
@@ -136,14 +144,14 @@ export default defineComponent({
 
 <style scoped>
 .focused-input {
-  padding: 0 .5em;
   text-decoration: none;
   color: initial;
+  outline: none;
 }
-.focused-input.inactive > .icon {
-  opacity: .5;
+.focused-input.inactive > div > .icon {
+  opacity: .3;
 }
-.focused-input.inactive:hover > .icon {
+.focused-input.inactive:hover > div > .icon {
   opacity: 1;
 }
 .focused-input.inactive:hover {

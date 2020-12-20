@@ -4,16 +4,19 @@
       app
       color="primary"
       dark
+      :class="{ dislocated: !located, located: located }"
     >
       <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
+        <v-btn icon tile @click="locate">
+          <v-img
+            alt="Vuetify Logo"
+            class="shrink mr-2"
+            contain
+            src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
+            transition="scale-transition"
+            width="40"
+          />
+        </v-btn>
 
         <v-img
           alt="Vuetify Name"
@@ -25,7 +28,7 @@
         />
       </div>
 
-      <v-spacer></v-spacer>
+      <v-spacer />
 
       <v-btn
         href="https://github.com/vuetifyjs/vuetify/releases/latest"
@@ -44,9 +47,31 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from '@vue/composition-api';
+import { defineComponent, ref } from '@vue/composition-api';
 
 export default defineComponent({
   name: 'App',
+
+  setup() {
+    const located = ref(false);
+    const locate = () => {
+      located.value = true;
+    };
+
+    return {
+      located,
+      locate
+    };
+  }
 });
 </script>
+
+<style scoped>
+.dislocated {
+height:100% !important;
+transition: height 1s;
+}
+.located {
+transition: height 1s;
+}
+</style>

@@ -1,17 +1,23 @@
 <template>
-  <a v-if="!currentActive"
+  <a
+    v-if="!currentActive"
     class="focused-input inactive d-flex align-center"
     :href="'#'"
     @click="startEdit"
     @focus="startEdit"
   >
-    <slot name="view">
-      <span class="ml-2">{{ currentValue }}</span>
+    <div v-if="!currentActive" style="display: flex;">
+      <div>
+        <slot name="view">
+          {{ currentValue }}
+        </slot>
+      </div>
       <v-icon class="ml-2 icon" small>mdi-pencil</v-icon>
-    </slot>
+    </div>
   </a>
 
-  <div v-else
+  <div
+    v-else
     class="focused-input active d-flex align-center"
   >
     <v-col class="py-0">
@@ -29,7 +35,8 @@
           </slot>
         </v-col>
 
-        <v-col v-if="!hideButtons"
+        <v-col
+          v-if="!hideButtons"
           class="pa-0 d-flex align-center"
           cols="auto"
         >
@@ -40,7 +47,9 @@
             small
             @click="cancelEdit"
           >
-            <v-icon class="pa-1" color="error" small>mdi-close</v-icon>
+            <v-icon class="pa-1" color="error" small>
+              mdi-close
+            </v-icon>
           </v-btn>
 
           <v-btn
@@ -50,7 +59,9 @@
             small
             @click="approveEdit"
           >
-            <v-icon class="pa-1" color="success" small>mdi-check</v-icon>
+            <v-icon class="pa-1" color="success" small>
+              mdi-check
+            </v-icon>
           </v-btn>
         </v-col>
       </v-row>
@@ -60,7 +71,7 @@
 
 <script lang="ts">
 import {
-  defineComponent, getCurrentInstance,
+  defineComponent, getCurrentInstance, watch,
 } from '@vue/composition-api';
 
 import { useProp, useSyncedProp } from '@/composites/prop';
@@ -81,6 +92,19 @@ export default defineComponent({
 
     const currentActive = useSyncedProp(props, 'active', context);
     const currentValue = useProp(props, 'value');
+
+    watch(currentActive, (newValue): void => {
+      if (newValue) {
+        instance.$nextTick(() => {
+          const input = instance.$el.querySelector('input');
+          if (input) {
+            if (!input.readOnly) {
+              input.select();
+            }
+          }
+        });
+      }
+    });
 
     // start editing mode and focus on input field
     const startEdit = (): void => {
@@ -133,15 +157,14 @@ export default defineComponent({
 
 <style scoped>
 .focused-input {
-  padding: 0 .5em;
-  height: 34px;
   text-decoration: none;
   color: initial;
+  outline: none;
 }
-.focused-input.inactive > .icon {
-  opacity: .5;
+.focused-input.inactive > div > .icon {
+  opacity: .3;
 }
-.focused-input.inactive:hover > .icon {
+.focused-input.inactive:hover > div > .icon {
   opacity: 1;
 }
 .focused-input.inactive:hover {

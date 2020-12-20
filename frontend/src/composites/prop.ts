@@ -1,5 +1,8 @@
 import {
-  Ref, ref, SetupContext, watch
+  Ref,
+  ref,
+  SetupContext,
+  watch
 } from '@vue/composition-api';
 import _ from 'lodash';
 
