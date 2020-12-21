@@ -15,7 +15,7 @@ module.exports = {
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    "indent": [
+    indent: [
       'error',
       2,
       {
@@ -115,13 +115,13 @@ module.exports = {
     'vue/this-in-template': ['error', 'never'],
     'vue/valid-v-model': 0,
     'vue/html-indent': ['error', 2, {
-      'attribute': 1,
-      'baseIndent': 1,
-      'closeBracket': 0,
-      'alignAttributesVertically': false,
-      'ignores': []
+      attribute: 1,
+      baseIndent: 1,
+      closeBracket: 0,
+      alignAttributesVertically: false,
+      ignores: []
     }],
-    "comma-dangle": "off",
-    "vue/comma-dangle": ["error"]
+    'comma-dangle': 'off',
+    'vue/comma-dangle': ['error']
   },
 };
